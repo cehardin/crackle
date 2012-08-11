@@ -11,6 +11,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.crackle.Actor;
 import org.crackle.ActorContext;
 import org.crackle.ActorId;
@@ -97,31 +99,47 @@ public class DefaultActorEngine implements ActorEngine {
 
         while (desiredState.equals(State.Running)) {
             for (final MessageRecord messageRecord : messageRecords) {
-                final ActorId actorId = messageRecord.getActorId();
 
-                if(desiredState.equals(State.Stopped)) {
+                if (desiredState.equals(State.Stopped)) {
                     break;
                 }
+                
                 messageRecords.remove(messageRecord);
 
                 executorService.submit(new Runnable() {
                     public void run() {
-                        if (actorsInProcess.add(actorId)) {
-                            final Actor actor = actorsMap.get(actorId);
+                        final ActorId actorId = messageRecord.getActorId();
+                        final Actor actor = actorsMap.get(actorId);
+                        if (actor != null) {
+                            if (actorsInProcess.add(actorId)) {
+                                try {
+                                    final AtomicBoolean terminate = new AtomicBoolean(false);
+                                    final ActorContext actorContext = new DefaultActorContext(
+                                            actorId, actorsMap, messageRecords,
+                                            terminate, actorIdFactory, actorFactory);
+                                    final Object message = messageRecord.getMessage();
 
-                            if (actor != null) {
-                                final AtomicBoolean terminate = new AtomicBoolean(false);
-                                final ActorContext actorContext = new DefaultActorContext(actorId, actorsMap, messageRecords, terminate, actorIdFactory, actorFactory);
+                                    try {
+                                        actor.process(actorContext, message);
+                                    } catch (final Throwable t) {
+                                        Logger.getAnonymousLogger().log(
+                                                Level.WARNING,
+                                                "Actor (" + actorId + ") failed to process message: " + message, t);
+                                    }
 
-                                actor.process(actorContext, messageRecord.getMessage());
-
-                                if (terminate.get()) {
-                                    actorsMap.remove(actorId);
+                                    if (terminate.get()) {
+                                        actorsMap.remove(actorId);
+                                    }
+                                } catch (final Throwable t) {
+                                    Logger.getAnonymousLogger().log(
+                                            Level.WARNING,
+                                            "Error processing actor (" + actorId + ")", t);
+                                } finally {
+                                    actorsInProcess.remove(actorId);
                                 }
-                                actorsInProcess.remove(actorId);
+                            } else {
+                                messageRecords.add(messageRecord);
                             }
-                        } else {
-                            messageRecords.add(messageRecord);
                         }
                     }
                 });
