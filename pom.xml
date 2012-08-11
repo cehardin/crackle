@@ -9,5 +9,6 @@
   <modules>
     <module>crackle-api</module>
     <module>crackle-engine</module>
+    <module>crackle-network</module>
   </modules>
 </project>
