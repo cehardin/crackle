@@ -23,6 +23,8 @@ import org.crackle.ActorType;
 public class DefaultActorEngine implements ActorEngine {
 
     private ExecutorService executorService;
+    private ActorIdFactory actorIdFactory;
+    private ActorFactory actorFactory;
     private State currentState = State.Stopped;
     private State desiredState = State.Stopped;
     private Thread processThread;
@@ -33,6 +35,22 @@ public class DefaultActorEngine implements ActorEngine {
 
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
+    }
+
+    public ActorIdFactory getActorIdFactory() {
+        return actorIdFactory;
+    }
+
+    public void setActorIdFactory(ActorIdFactory actorIdFactory) {
+        this.actorIdFactory = actorIdFactory;
+    }
+
+    public ActorFactory getActorFactory() {
+        return actorFactory;
+    }
+
+    public void setActorFactory(ActorFactory actorFactory) {
+        this.actorFactory = actorFactory;
     }
 
     public void start() {
@@ -47,9 +65,6 @@ public class DefaultActorEngine implements ActorEngine {
                 });
                 break;
             case Stopping:
-                desiredState = State.Running;
-                currentState = State.Starting;
-                break;
             case Starting:
             case Running:
                 break;
@@ -83,44 +98,76 @@ public class DefaultActorEngine implements ActorEngine {
         while (desiredState.equals(State.Running)) {
             for (final MessageRecord messageRecord : messageRecords) {
                 final ActorId actorId = messageRecord.getActorId();
+
+                if(desiredState.equals(State.Stopped)) {
+                    break;
+                }
                 messageRecords.remove(messageRecord);
-                if (actorsInProcess.add(actorId)) {
-                    final Actor actor = actorsMap.get(actorId);
 
-                    if (actor != null) {
-                        final AtomicBoolean terminate = new AtomicBoolean(false);
-                        final ActorContext actorContext = new ActorContext() {
-                            public ActorId getMyActorId() {
-                                return actorId;
-                            }
+                executorService.submit(new Runnable() {
+                    public void run() {
+                        if (actorsInProcess.add(actorId)) {
+                            final Actor actor = actorsMap.get(actorId);
 
-                            public ActorId createActor(ActorType actorType) {
-                                throw new UnsupportedOperationException("Not supported yet.");
-                            }
+                            if (actor != null) {
+                                final AtomicBoolean terminate = new AtomicBoolean(false);
+                                final ActorContext actorContext = new DefaultActorContext(actorId, actorsMap, messageRecords, terminate, actorIdFactory, actorFactory);
 
-                            public void sendMessage(ActorId recipient, Object message) {
-                                throw new UnsupportedOperationException("Not supported yet.");
-                            }
-
-                            public void terminate() {
-                                terminate.set(true);
-                            }
-                        };
-                        executorService.submit(new Runnable() {
-                            public void run() {
                                 actor.process(actorContext, messageRecord.getMessage());
 
                                 if (terminate.get()) {
                                     actorsMap.remove(actorId);
                                 }
+                                actorsInProcess.remove(actorId);
                             }
-                        });
+                        } else {
+                            messageRecords.add(messageRecord);
+                        }
                     }
-                }
+                });
             }
         }
 
         currentState = State.Stopped;
+    }
+
+    private static class DefaultActorContext implements ActorContext {
+
+        private final ActorId actorId;
+        private final ConcurrentMap<ActorId, Actor> actorsMap;
+        private final Set<MessageRecord> messageRecords;
+        private final AtomicBoolean terminate;
+        private final ActorIdFactory actorIdFactory;
+        private final ActorFactory actorFactory;
+
+        public DefaultActorContext(ActorId actorId, ConcurrentMap<ActorId, Actor> actorsMap, Set<MessageRecord> messageRecords, AtomicBoolean terminate, ActorIdFactory actorIdFactory, ActorFactory actorFactory) {
+            this.actorId = actorId;
+            this.actorsMap = actorsMap;
+            this.messageRecords = messageRecords;
+            this.terminate = terminate;
+            this.actorIdFactory = actorIdFactory;
+            this.actorFactory = actorFactory;
+        }
+
+        public ActorId getMyActorId() {
+            return actorId;
+        }
+
+        public ActorId createActor(final ActorType actorType) {
+            final ActorId newActorId = actorIdFactory.createActorId();
+            final Actor newActor = actorFactory.createActor(actorType);
+
+            actorsMap.put(newActorId, newActor);
+            return actorId;
+        }
+
+        public void sendMessage(final ActorId recipient, final Object message) {
+            messageRecords.add(new MessageRecord(recipient, message));
+        }
+
+        public void terminate() {
+            terminate.set(true);
+        }
     }
 
     private static class MessageRecord {
