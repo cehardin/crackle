@@ -5,15 +5,16 @@
 package org.crackle.net.layer;
 
 import org.crackle.net.du.Bits;
+import org.crackle.net.du.Datagram;
 import org.crackle.net.du.Frame;
 
 /**
  *
  * @author chad
  */
-public interface DataLinkLayer<F extends Frame, B extends Bits> {
+public interface DataLinkLayer<D extends Datagram, F extends Frame, B extends Bits> {
 
-    void transmit(F frame);
+    void transmit(D datagram);
 
     void receive(B bits);
 
@@ -21,7 +22,7 @@ public interface DataLinkLayer<F extends Frame, B extends Bits> {
 
     void setPhysicalLayer(PhysicalLayer<B> physicalLayer);
 
-    NetworkLayer<?, F> getNetworkLayer();
+    NetworkLayer<?, D, F> getNetworkLayer();
 
-    void setNetworkLayer(NetworkLayer<?, F> networkLayer);
+    void setNetworkLayer(NetworkLayer<?, D, F> networkLayer);
 }

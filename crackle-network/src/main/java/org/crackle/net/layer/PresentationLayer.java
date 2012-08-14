@@ -11,17 +11,17 @@ import org.crackle.net.du.Segment;
  *
  * @author chad
  */
-public interface PresentationLayer<DT extends Data, DR extends Data> {
+public interface PresentationLayer<DT extends Data, D extends Data, DR extends Data> {
 
     void transmit(DT data);
 
     void receive(DR data);
 
-    SessionLayer<DR, ?> getSessionLayer();
+    SessionLayer<D, DR, ?> getSessionLayer();
 
-    void setSessionLayer(SessionLayer<DR, ?> sessionLayer);
+    void setSessionLayer(SessionLayer<D, DR, ?> sessionLayer);
     
-    ApplicationLayer<?, DT> getApplicationLayer();
+    ApplicationLayer<?, DT, D> getApplicationLayer();
     
-    void setApplicationLayer(ApplicationLayer<?,DT> applicationLayer);
+    void setApplicationLayer(ApplicationLayer<?,DT, D> applicationLayer);
 }

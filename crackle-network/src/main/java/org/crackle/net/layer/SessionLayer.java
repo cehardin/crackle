@@ -12,17 +12,17 @@ import org.crackle.net.du.Segment;
  *
  * @author chad
  */
-public interface SessionLayer<D extends Data, S extends Segment> {
+public interface SessionLayer<DT extends Data, DR extends Data, S extends Segment> {
 
-    void transmit(D data);
+    void transmit(DT data);
 
-    void receive(S data);
+    void receive(S segment);
 
-    TransportLayer<S, ?> getTransportLayer();
+    TransportLayer<DR, S, ?> getTransportLayer();
 
-    void setTransportLayer(TransportLayer<S, ?> transportLayer);
+    void setTransportLayer(TransportLayer<DR, S, ?> transportLayer);
 
-    PresentationLayer<?, D> getPresentationLayer();
+    PresentationLayer<?, DT, DR> getPresentationLayer();
 
-    void setPresentationLayer(PresentationLayer<?, D> presentationLayer);
+    void setPresentationLayer(PresentationLayer<?, DT, DR> presentationLayer);
 }

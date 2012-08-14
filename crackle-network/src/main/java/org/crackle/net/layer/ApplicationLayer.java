@@ -10,13 +10,13 @@ import org.crackle.net.du.Data;
  *
  * @author chad
  */
-public interface ApplicationLayer<DT extends Data, DR extends Data> {
+public interface ApplicationLayer<DT extends Data, D extends Data, DR extends Data> {
 
     void transmit(DT data);
 
     void receive(DR data);
 
-    PresentationLayer<DR, ?> getPresentationLayer();
+    PresentationLayer<D, DR, ?> getPresentationLayer();
 
-    void setPresentationLayer(PresentationLayer<DR, ?> presentationLayer);
+    void setPresentationLayer(PresentationLayer<D, DR, ?> presentationLayer);
 }
