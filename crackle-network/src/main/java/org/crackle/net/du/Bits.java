@@ -9,5 +9,4 @@ package org.crackle.net.du;
  * @author chad
  */
 public interface Bits {
-    
 }

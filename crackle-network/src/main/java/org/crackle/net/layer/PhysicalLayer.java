@@ -4,6 +4,7 @@
  */
 package org.crackle.net.layer;
 
+import java.util.Set;
 import org.crackle.net.du.Bits;
 
 /**
@@ -11,6 +12,10 @@ import org.crackle.net.du.Bits;
  * @author chad
  */
 public interface PhysicalLayer<B extends Bits> {
-    void transmit(B data);
-    void receive(byte[] data);
+
+    void transmit(B bits);
+
+    Set<DataLinkLayer<?, B>> getDataLinkLayers();
+
+    void setDataLinkLayer(Set<DataLinkLayer<?, B>> dataLinkLayers);
 }
