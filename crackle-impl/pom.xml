@@ -8,14 +8,20 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <groupId>org.crackle</groupId>
-  <artifactId>crackle-network</artifactId>
+  <artifactId>crackle-impl</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>crackle-network</name>
+  <name>crackle-impl</name>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
+      <dependency>
+          <groupId>org.crackle</groupId>
+          <artifactId>crackle-api</artifactId>
+          <version>1.0-SNAPSHOT</version>
+          <scope>compile</scope>
+      </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
