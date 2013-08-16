@@ -4,12 +4,10 @@
  */
 package org.crackle.engine;
 
-import org.crackle.ActorId;
-
 /**
  *
- * @author chad
+ * @author Chad
  */
-public interface ActorIdFactory {
-    ActorId createActorId();
+public class EnvironmentImpl extends {
+    
 }

@@ -8,7 +8,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <groupId>org.crackle</groupId>
-  <artifactId>crackle-engine</artifactId>
+  <artifactId>crackle-impl</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>crackle-engine</name>
   <url>http://maven.apache.org</url>
