@@ -1,11 +1,11 @@
 package org.crackle;
 
-import java.io.Serializable;
 
 /**
  * An address for an actor
  * @author Chad
+ * @param <T>
  */
-public interface Address extends Serializable, Cloneable {
-    Address clone();
+public interface Address<T extends Actor> {
+    T lookup();
 }
