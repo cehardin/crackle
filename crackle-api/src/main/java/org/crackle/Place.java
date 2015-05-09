@@ -1,6 +1,7 @@
 package org.crackle;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  *
@@ -15,4 +16,6 @@ public interface Place extends Serializable {
     Address create(Class<? extends Actor> type);
     
     void send(Address address, Message message);
+    
+    Set<Address> getActors();
 }

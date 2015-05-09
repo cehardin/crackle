@@ -20,12 +20,12 @@ public class SimpleContext implements Context {
 
     @Override
     public void terminate() throws IllegalStateException {
-        place.getActors().remove(address);
+        place.getPendingTermination().add(address);
     }
 
     @Override
     public void suspend() throws IllegalStateException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //do nothing for the simple impl
     }
 
     @Override

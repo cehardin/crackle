@@ -32,21 +32,57 @@ public class SimplePlaceRunner implements Runnable {
         }
     }
 
-    private void process(final Address address) {
-        final Optional<ActorRecord> record = Optional.ofNullable(place.getActors().get(address));
+    private void process(final ActionRecord action) {
+        switch (action.getType()) {
+            case Message:
+                processMessages(action.getAddress());
+                break;
+            case Terminate:
+                processTerminate(action.getAddress());
+                break;
+        }
+    }
+
+    private void processTerminate(final Address address) {
+        final Optional<ActorRecord> record = Optional.ofNullable(place.getActorRecords().get(address));
+        
+        if(record.isPresent()) {
+            final Queue<Message> messages = record.get().getMessages();
+            final Actor actor = record.get().getActor();
+            final SimpleContext context = record.get().getContext();
+            
+            messages.clear();
+            place.getActors().remove(address);
+            place.getQueue().removeIf(r -> r.getAddress().equals(address));
+            place.getPendingTermination().remove(address);
+            
+            try {
+                actor.terminate(context);
+            }
+            catch(Exception e) {
+                logger.log(Level.SEVERE, String.format("Actor %s failed to handle termination", address), e);
+            }
+        }
+    }
+
+    private void processMessages(final Address address) {
+        final Optional<ActorRecord> record = Optional.ofNullable(place.getActorRecords().get(address));
 
         if (record.isPresent()) {
             final Queue<Message> messages = record.get().getMessages();
             final Actor actor = record.get().getActor();
+            final SimpleContext context = record.get().getContext();
 
             while (true) {
                 final Optional<Message> message = Optional.ofNullable(messages.poll());
 
                 if (message.isPresent()) {
-                    try {
-                        actor.message(new SimpleContext(place, address), message.get());
-                    } catch (Exception e) {
-                        logger.log(Level.SEVERE, String.format("Actor %s failed to process message: %s", address, message.get()), e);
+                    if (!place.getPendingTermination().contains(address)) {
+                        try {
+                            actor.message(context, message.get());
+                        } catch (Exception e) {
+                            logger.log(Level.SEVERE, String.format("Actor %s failed to process message: %s", address, message.get()), e);
+                        }
                     }
                 } else {
                     break;

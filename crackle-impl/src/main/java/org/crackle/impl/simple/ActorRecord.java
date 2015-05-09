@@ -11,10 +11,12 @@ import org.crackle.Message;
 public class ActorRecord {
     private final Actor actor;
     private final Queue<Message> messages;
+    private final SimpleContext context;
 
-    public ActorRecord(Actor actor, Queue<Message> messages) {
+    public ActorRecord(Actor actor, Queue<Message> messages, SimpleContext context) {
         this.actor = actor;
         this.messages = messages;
+        this.context = context;
     }
 
     public Actor getActor() {
@@ -24,6 +26,8 @@ public class ActorRecord {
     public Queue<Message> getMessages() {
         return messages;
     }
-    
-    
+
+    public SimpleContext getContext() {
+        return context;
+    }
 }
