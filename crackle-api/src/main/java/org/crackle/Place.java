@@ -1,13 +1,16 @@
 package org.crackle;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Chad
  */
-public interface Context {
-    void terminate() throws IllegalStateException;
+public interface Place extends Serializable {
     
-    void suspend() throws IllegalStateException;
+    void start();
+    
+    void stop();
     
     Address create(Class<? extends Actor> type);
     
