@@ -18,4 +18,6 @@ public interface Place extends Serializable {
     void send(Address address, Message message);
     
     Set<Address> getActors();
+    
+    Iterable<Place> getSubPlaces();
 }

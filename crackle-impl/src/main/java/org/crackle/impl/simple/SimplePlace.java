@@ -1,6 +1,8 @@
 package org.crackle.impl.simple;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -10,6 +12,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.crackle.Actor;
 import org.crackle.Address;
 import org.crackle.Message;
@@ -26,7 +30,6 @@ public class SimplePlace implements Place {
     private final Thread thread;
     
     public SimplePlace() {
-        
         actorRecords = new ConcurrentHashMap<>();
         queue = new LinkedBlockingQueue<>();
         thread = new Thread(new SimplePlaceRunner(this));
@@ -46,6 +49,11 @@ public class SimplePlace implements Place {
     @Override
     public Set<Address> getActors() {
         return Collections.unmodifiableSet(getActorRecords().keySet());
+    }
+
+    @Override
+    public Iterable<Place> getSubPlaces() {
+        return Collections.emptyList();
     }
     
 
