@@ -1,8 +1,6 @@
 package org.crackle.impl.simple;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -12,8 +10,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.crackle.Actor;
 import org.crackle.Address;
 import org.crackle.Message;
@@ -25,10 +21,13 @@ import org.crackle.Place;
  */
 public class SimplePlace implements Place {
     private final BlockingQueue<ActionRecord> queue;
-    private final ConcurrentMap<Address, ActorRecord> actorRecords;
-    private final Set<Address> pendingTermination;
+    private final ConcurrentMap<Address<?>, ActorRecord> actorRecords;
+    private final Set<Address<?>> pendingTermination;
     private final Thread thread;
     
+    /**
+     * 
+     */
     public SimplePlace() {
         actorRecords = new ConcurrentHashMap<>();
         queue = new LinkedBlockingQueue<>();
@@ -36,41 +35,65 @@ public class SimplePlace implements Place {
         pendingTermination = new ConcurrentSkipListSet<>();
     }
 
+    /**
+     * 
+     */
     @Override
     public void start() {
         thread.start();
     }
 
+    /**
+     * 
+     */
     @Override
     public void stop() {
         thread.interrupt();
     }
 
+    /**
+     * 
+     * @return 
+     */
     @Override
-    public Set<Address> getActors() {
+    public Set<Address<?>> getActors() {
         return Collections.unmodifiableSet(getActorRecords().keySet());
-    }
-
-    @Override
-    public Iterable<Place> getSubPlaces() {
-        return Collections.emptyList();
     }
     
 
+    /**
+     * 
+     * @return 
+     */
     BlockingQueue<ActionRecord> getQueue() {
         return queue;
     }
 
-    ConcurrentMap<Address, ActorRecord> getActorRecords() {
+    /**
+     * 
+     * @return 
+     */
+    ConcurrentMap<Address<?>, ActorRecord> getActorRecords() {
         return actorRecords;
     }
 
-    Set<Address> getPendingTermination() {
+    /**
+     * 
+     * @return 
+     */
+    Set<Address<?>> getPendingTermination() {
         return pendingTermination;
     }
     
+    /**
+     * 
+     * @param <M>
+     * @param <A>
+     * @param type
+     * @return 
+     */
     @Override
-    public Address create(Class<? extends Actor> type) {
+    public <M extends Message, A extends Actor<M>> Address<M> create(Class<A> type) {
         final Address address = new SimpleAddress();
         final Actor actor = newActor(type);
         final SimpleContext context = new SimpleContext(this, address);
@@ -80,8 +103,14 @@ public class SimplePlace implements Place {
         return address;
     }
 
+    /**
+     * 
+     * @param <M>
+     * @param address
+     * @param message 
+     */
     @Override
-    public void send(Address address, Message message) {
+    public <M extends Message> void send(Address<M> address, M message) {
         final Optional<ActorRecord> record = Optional.ofNullable(actorRecords.get(address));
         if(record.isPresent()) {
             final Queue<Message> messages = record.get().getMessages();
@@ -95,6 +124,11 @@ public class SimplePlace implements Place {
         }
     }
     
+    /**
+     * 
+     * @param type
+     * @return 
+     */
     private Actor newActor(Class<? extends Actor> type) {
         try {
             return type.newInstance();

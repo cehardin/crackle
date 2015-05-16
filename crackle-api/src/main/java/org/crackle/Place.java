@@ -4,20 +4,24 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
- *
- * @author Chad
+ * A place is where actors reside.
+ * @author Chad Hardin
  */
-public interface Place extends Serializable {
+public interface Place extends ActorCreator, MessageSender, Serializable {
     
+    /**
+     * Start the place
+     */
     void start();
     
+    /**
+     * Stop the place
+     */
     void stop();
     
-    Address create(Class<? extends Actor> type);
-    
-    void send(Address address, Message message);
-    
-    Set<Address> getActors();
-    
-    Iterable<Place> getSubPlaces();
+    /**
+     * Get the actors in this place
+     * @return The actors in this place
+     */
+    Set<Address<?>> getActors();
 }

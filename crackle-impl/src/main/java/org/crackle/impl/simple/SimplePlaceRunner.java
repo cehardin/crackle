@@ -17,10 +17,17 @@ public class SimplePlaceRunner implements Runnable {
     private final Logger logger = Logger.getGlobal();
     private final SimplePlace place;
 
+    /**
+     * 
+     * @param place 
+     */
     public SimplePlaceRunner(SimplePlace place) {
         this.place = place;
     }
 
+    /**
+     * 
+     */
     @Override
     public void run() {
         try {
@@ -32,6 +39,10 @@ public class SimplePlaceRunner implements Runnable {
         }
     }
 
+    /**
+     * 
+     * @param action 
+     */
     private void process(final ActionRecord action) {
         switch (action.getType()) {
             case Message:
@@ -43,6 +54,10 @@ public class SimplePlaceRunner implements Runnable {
         }
     }
 
+    /**
+     * 
+     * @param address 
+     */
     private void processTerminate(final Address address) {
         final Optional<ActorRecord> record = Optional.ofNullable(place.getActorRecords().get(address));
         
@@ -65,6 +80,10 @@ public class SimplePlaceRunner implements Runnable {
         }
     }
 
+    /**
+     * 
+     * @param address 
+     */
     private void processMessages(final Address address) {
         final Optional<ActorRecord> record = Optional.ofNullable(place.getActorRecords().get(address));
 

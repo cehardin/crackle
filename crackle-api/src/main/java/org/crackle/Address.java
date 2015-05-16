@@ -5,7 +5,8 @@ import java.io.Serializable;
 
 /**
  * An address for an actor
- * @author Chad
+ * @author Chad Hardin
+ * @param <M> The type of messages the actor processes.
  */
-public interface Address extends Serializable {
+public interface Address<M extends Message> extends Serializable {
 }
