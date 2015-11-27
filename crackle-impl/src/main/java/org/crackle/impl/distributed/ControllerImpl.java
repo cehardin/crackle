@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadLocalRandom;
 import org.crackle.Address;
+import org.crackle.Message;
 
 /**
  * 
@@ -38,10 +39,18 @@ public class ControllerImpl implements Controller, WorkerListener {
     }
 
     @Override
-    public void actorCreated(Worker worker, Address address) throws RemoteException {
-        addressWorkerMap.put(Objects.requireNonNull(address), Objects.requireNonNull(worker));
+    public void actorCreated(Worker source, Address address) throws RemoteException {
+        addressWorkerMap.put(Objects.requireNonNull(address), Objects.requireNonNull(source));
     }
-    
+
+    @Override
+    public void messageUndeliverable(Worker source, Address address, Message message) throws RemoteException {
+        final Optional<Worker> worker = Optional.ofNullable(findWorker(address));
+        
+        if(worker.isPresent()) {
+            worker.get().send(address, message);
+        }
+    }
     
     @Override
     public Worker findWorker(Address address) throws RemoteException {

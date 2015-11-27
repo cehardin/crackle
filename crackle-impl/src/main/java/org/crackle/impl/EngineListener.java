@@ -13,4 +13,6 @@ public interface EngineListener extends EventListener {
      * @param event The engine event, never null.
      */
     void actorCreated(EngineEvent event);
+    
+    void messageUndeliverable(EngineEvent event);
 }

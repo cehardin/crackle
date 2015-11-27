@@ -2,7 +2,9 @@ package org.crackle.impl;
 
 import java.util.EventObject;
 import java.util.Objects;
+import java.util.Optional;
 import org.crackle.Address;
+import org.crackle.Message;
 
 /**
  * Engine events that passed to instance of {@link EngineListener}.
@@ -11,11 +13,13 @@ import org.crackle.Address;
 public class EngineEvent extends EventObject {
     private final Engine engine;
     private final Address address;
+    private final Optional<Message> message;
 
-    public EngineEvent(Engine engine, Address address) {
+    public EngineEvent(Engine engine, Address address, Optional<Message> message) {
         super(engine);
         this.engine = Objects.requireNonNull(engine);
         this.address = Objects.requireNonNull(address);
+        this.message = Objects.requireNonNull(message);
     }
 
     /**
@@ -33,5 +37,8 @@ public class EngineEvent extends EventObject {
     public Address getAddress() {
         return address;
     }
-    
+
+    public Optional<Message> getMessage() {
+        return message;
+    }
 }

@@ -45,11 +45,12 @@ public class ExecutorEngine implements Engine {
     public Address create(final Behavior behavior) {
         final Address address = addressFactory.createAddress();
         final ExecutorActor actor = new ExecutorActor(behavior.clone());
-
+        final EngineEvent event = new EngineEvent(this, address, Optional.empty());
+        
         actors.put(address, actor);
         
         for(final EngineListener listener : listeners) {
-            listener.actorCreated(new EngineEvent(this, address));
+            listener.actorCreated(event);
         }
         
         return address;
@@ -68,6 +69,13 @@ public class ExecutorEngine implements Engine {
             }
         });
         
+        if(!contains) {
+            final EngineEvent event = new EngineEvent(this, address, Optional.of(message.clone()));
+            
+            for(final EngineListener listener : listeners) {
+                listener.messageUndeliverable(event);
+            }
+        }
         return contains;
     }
 

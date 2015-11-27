@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.crackle.Address;
 import org.crackle.Behavior;
 import org.crackle.Message;
@@ -16,6 +18,7 @@ import org.crackle.impl.EngineListener;
  * @author Chad
  */
 public class WorkerImpl implements Worker, EngineListener {
+    private static final Logger logger = Logger.getLogger(WorkerImpl.class.getName());
     private final List<WorkerListener> listeners = new ArrayList<>();
     private final Engine engine;
 
@@ -63,8 +66,20 @@ public class WorkerImpl implements Worker, EngineListener {
                 listener.actorCreated(this, event.getAddress());
             }
             catch(RemoteException e) {
-                
+                logger.log(Level.WARNING, "Could not propage actor created event", e);
             }
         }
     }
+
+    @Override
+    public void messageUndeliverable(EngineEvent event) {
+        for(final WorkerListener listener : listeners) {
+            try {
+                listener.messageUndeliverable(this, event.getAddress(), event.getMessage().get());
+            }
+            catch(RemoteException e) {
+                logger.log(Level.WARNING, "Could not propage message underliverable event", e);
+            }
+        }
+    } 
 }
