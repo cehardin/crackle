@@ -9,7 +9,7 @@ public interface Context {
    
     /**
      * Get the address for the actor being processed.
-     * @return The adddress of the actor being processed.
+     * @return The address of the actor being processed, never null.
      */
     Address getAddress();
     
@@ -25,9 +25,20 @@ public interface Context {
      */
     void change(Behavior behavior) throws IllegalStateException, NullPointerException;
     
-    /**
-     * Get the place.
-     * @return The place.
+    
+     /**
+     * Creates an actor and returns its address.
+     * @param behavior The initial behavior of the actor
+     * @return The address of the newly created actor, never null
+     * @throws NullPointerException If the behavior is null
      */
-    Place getPlace();
+    Address create(Behavior behavior) throws NullPointerException;
+    
+    /**
+     * Send a message to an actor.
+     * @param address The address of the actor
+     * @param message The message to send
+     * @throws NullPointerException If address or message are null
+     */
+    void send(Address address, Message message) throws NullPointerException;
 }
