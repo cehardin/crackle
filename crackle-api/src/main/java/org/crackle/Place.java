@@ -1,27 +1,23 @@
 package org.crackle;
 
-import java.io.Serializable;
-import java.util.Set;
 
 /**
  * A place is where actors reside.
- * @author Chad Hardin
+ * @author Chad
  */
-public interface Place extends ActorCreator, MessageSender, Serializable {
+public interface Place {
+    
+     /**
+     * Creates an actor and returns its address.
+     * @param behavior The initial behavior of the actor
+     * @return The address of the newly created actor
+     */
+    Address create(Behavior behavior);
     
     /**
-     * Start the place
+     * Send a message to an actor.
+     * @param address The address of the actor
+     * @param message The message to send
      */
-    void start();
-    
-    /**
-     * Stop the place
-     */
-    void stop();
-    
-    /**
-     * Get the actors in this place
-     * @return The actors in this place
-     */
-    Set<Address<?>> getActors();
+    void send(Address address, Message message);
 }

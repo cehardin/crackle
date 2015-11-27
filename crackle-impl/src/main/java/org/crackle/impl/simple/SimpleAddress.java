@@ -1,13 +1,11 @@
 package org.crackle.impl.simple;
 
 import org.crackle.Address;
-import org.crackle.Message;
 
 /**
  *
- * @author Chad Hardin
- * @param <M>
+ * @author Chad
  */
-public class SimpleAddress<M extends Message> implements Address<M> {
+final class SimpleAddress implements Address {
     
 }
