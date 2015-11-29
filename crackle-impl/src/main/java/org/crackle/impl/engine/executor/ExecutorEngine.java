@@ -60,7 +60,7 @@ public class ExecutorEngine implements Engine {
     @Override
     public Address create(final Behavior behavior) {
         final Address address = addressFactory.createAddress();
-        final ExecutorActor actor = new ExecutorActor(behavior.clone());
+        final ExecutorActor actor = new ExecutorActor(behavior);
         final EngineEvent event = new EngineEvent(this, address, Optional.empty());
         
         actors.put(address, actor);

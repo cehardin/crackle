@@ -30,6 +30,12 @@ public interface Context {
     Address getAddress();
     
     /**
+     * Get the message.
+     * @return The message
+     */
+    Message getMessage();
+    
+    /**
      * Change the behavior of the actor for the next message to be processed.  
      * An actor may change its behavior
      * while processing a message. However, it can only change in once. If

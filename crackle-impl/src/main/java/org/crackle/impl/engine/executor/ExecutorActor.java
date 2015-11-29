@@ -52,6 +52,11 @@ class ExecutorActor {
             public Address getAddress() {
                 return address;
             }
+            
+            @Override
+            public Message getMessage() {
+                return message;
+            }
 
             @Override
             public void change(Behavior behavior) throws IllegalStateException, NullPointerException {
@@ -59,7 +64,7 @@ class ExecutorActor {
                     throw new IllegalStateException();
                 }
                 else {
-                    nextBehavior = Optional.of(behavior.clone());
+                    nextBehavior = Optional.of(Objects.requireNonNull(behavior));
                 }
             }
 
@@ -77,8 +82,6 @@ class ExecutorActor {
         if(nextBehavior.isPresent()) {
             behavior = nextBehavior.get();
             nextBehavior = Optional.empty();
-        } else {
-            behavior = behavior.clone();
         }
     }
 

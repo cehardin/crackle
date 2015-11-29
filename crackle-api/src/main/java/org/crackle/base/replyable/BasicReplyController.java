@@ -35,7 +35,7 @@ public class BasicReplyController implements ReplyController {
     @Override
     public void send(Context context, Address to, Message message, Behavior replyBehavior) {
         final ReplyableMessage replyableMessage = new ReplyableMessage(context.getAddress(), message);
-        replyBehaviors.put(replyableMessage.getReplyWith(), replyBehavior);
+        replyBehaviors.put(replyableMessage.getReplyWith(), Objects.requireNonNull(replyBehavior));
         context.send(to, replyableMessage);
     }
 
@@ -55,7 +55,7 @@ public class BasicReplyController implements ReplyController {
         final BasicReplyController clone = new BasicReplyController();
         
         for(final Map.Entry<MessageId, Behavior> entry : replyBehaviors.entrySet()) {
-            clone.replyBehaviors.put(entry.getKey(), entry.getValue().clone());
+            clone.replyBehaviors.put(entry.getKey(), entry.getValue());
         }
         
         return clone;
