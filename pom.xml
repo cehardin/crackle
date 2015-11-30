@@ -24,9 +24,13 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>crackle</name>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <modules>
         <module>crackle-api</module>
         <module>crackle-impl</module>
+        <module>crackle-examples</module>
     </modules>
     <build>
         <plugins>

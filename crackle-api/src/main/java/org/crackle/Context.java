@@ -35,6 +35,14 @@ public interface Context {
      */
     Message getMessage();
     
+    default <T extends Message> T getMessageAs() {
+        return (T)getMessage();
+    }
+    
+    default <T extends Message> T getMessageAs(Class<T> t) {
+        return t.cast(getMessage());
+    }
+    
     /**
      * Change the behavior of the actor for the next message to be processed.  
      * An actor may change its behavior
