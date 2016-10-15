@@ -35,7 +35,7 @@
       </dependency>
       <dependency>
           <groupId>org.crackle</groupId>
-          <artifactId>crackle-impl</artifactId>
+          <artifactId>crackle-impl-local</artifactId>
           <version>${project.version}</version>
           <scope>compile</scope>
       </dependency>

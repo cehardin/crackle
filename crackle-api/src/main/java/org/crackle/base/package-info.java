@@ -14,22 +14,4 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with crackle-api.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.crackle;
-
-import java.io.Serializable;
-
-/**
- * A message is sent to and processed by an actor.
- *
- * @author Chad Hardin
- */
-public interface Message extends Serializable, Cloneable {
-
-  /**
-   * Clone the message. Messages must be able to clone themselves. If the
-   * message is immutable, it may return itself.
-   *
-   * @return A clone of the message, never null.
-   */
-  Message clone();
-}
+package org.crackle.base;

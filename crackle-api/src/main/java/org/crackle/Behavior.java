@@ -17,30 +17,24 @@
 package org.crackle;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
- * The immutable behavior for an actor. An actor may potential have many different
- * behaviors over the course of its life. Behaviors MUST be immutable and should never
- * share any state with other behaviors.
+ * The immutable behavior for an actor. An actor may potential have many
+ * different behaviors over the course of its life. Behaviors MUST be immutable
+ * and should never share any state with other behaviors.
+ *
  * @author Chad Hardin
+ * @param <M> The type of message
  */
 @FunctionalInterface
-public interface Behavior extends Serializable {
-    
-    /**
-     * Process a message.  An actor may create other actors, send messages,
-     * and optionally change its behavior for the next message.
-     * @param context The context to process under, never null
-     */
-    void process(Context context);
+public interface Behavior<M extends Message> extends Serializable {
 
-    default Behavior andThen(Behavior after) {
-        Objects.requireNonNull(after);
-        
-        return (c) -> {
-            process(c);
-            after.process(c);
-        };
-    }
+  /**
+   * Process a message. An actor may create other actors and send messages, The
+   * actor must change to a different behavior object each time this method is
+   * called.
+   *
+   * @param context The context to process under, never null
+   */
+  void process(Context<M> context);
 }

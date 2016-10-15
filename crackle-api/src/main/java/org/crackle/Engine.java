@@ -16,20 +16,19 @@
  */
 package org.crackle;
 
-import java.io.Serializable;
+import java.util.Set;
 
 /**
- * A message is sent to and processed by an actor.
+ * A place where actors execute.
  *
  * @author Chad Hardin
  */
-public interface Message extends Serializable, Cloneable {
+public interface Engine extends Creator, Sender {
 
   /**
-   * Clone the message. Messages must be able to clone themselves. If the
-   * message is immutable, it may return itself.
+   * Get all of the actor addresses known by this engine.
    *
-   * @return A clone of the message, never null.
+   * @return an immutable set of actor addresses, never null.
    */
-  Message clone();
+  Set<Address> getAddresses();
 }

@@ -16,20 +16,20 @@
  */
 package org.crackle;
 
-import java.io.Serializable;
-
 /**
- * A message is sent to and processed by an actor.
+ * Sends messages to actors.
  *
  * @author Chad Hardin
  */
-public interface Message extends Serializable, Cloneable {
+@FunctionalInterface
+public interface Sender {
 
   /**
-   * Clone the message. Messages must be able to clone themselves. If the
-   * message is immutable, it may return itself.
+   * Send a message to an actor.
    *
-   * @return A clone of the message, never null.
+   * @param address The address of the actor
+   * @param message The message to send
+   * @throws NullPointerException If address or message are null
    */
-  Message clone();
+  void send(Address address, Message message) throws NullPointerException;
 }
